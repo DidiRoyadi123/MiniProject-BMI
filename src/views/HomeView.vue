@@ -1,39 +1,44 @@
 <template>
   <div class="home">
-    <p>
-      <!-- {{riwayat}} -->
-    </p>
     <div class="kalkulator">
       <h1>Kalkulator BMI( Body Mass Index)</h1>
 
       <input type="text" placeholder="Nama" required v-model="nama" id="nama" />
+
       <br />
       <br />
-      <input
-        type="number"
-        placeholder="Berat Badan"
-        required
-        v-model="berat"
-        id="berat"
-        v-on:keyup.enter="hitungBmi"
-      />
-      kg ||
-      <input
-        type="number"
-        placeholder="Tinggi Badan"
-        required
-        v-model="tinggi"
-        id="tinggi"
-        v-on:keyup.enter="hitungBmi"
-      />
-      cm <br />
-      <br />
-      <button @click="hitungBmi">Hitung BMI</button>
-      <p>Nilai BMI anda adalah : {{ this.bmi }}</p>
-      <p v-if="this.bmi <= 18.5">Status anda adalah : KURANG</p>
-      <p v-else-if="this.bmi <= 24.9">Status anda adalah : IDEAL</p>
-      <p v-else-if="this.bmi <= 29.9">Status anda adalah : BERAT</p>
-      <p v-else>Status anda adalah : OBESITAS</p>
+
+      <form action="submit" >
+        <input
+          type="number"
+          placeholder="Berat Badan"
+          required
+          v-model="berat"
+          id="berat"
+        /> kg 
+        
+        ||
+
+        <input
+          type="number"
+          placeholder="Tinggi Badan"
+          required
+          v-model="tinggi"
+          id="tinggi"
+        />cm 
+        
+        <br />
+        <br />
+
+      </form>
+      <button @click="hitungBmi" type="submit" :disabled="!tinggi && !berat && !nama">
+        Hitung BMI
+      </button>
+
+      <p v-if="this.bmi != 0">Nilai BMI anda adalah : {{ this.bmi }}</p>
+
+      <p>{{ this.status }}</p>
+
       <button @click="simpanData">Simpan Hasil</button>
     </div>
     <hr />
@@ -48,6 +53,7 @@
             <th>BMI</th>
             <th>Status</th>
             <th>Rekomendasi</th>
+            <th>Aksi</th>
           </tr>
         </thead>
         <tbody>
@@ -58,6 +64,9 @@
             <td>{{ riwayat.bmi }}</td>
             <td>{{ riwayat.status }}</td>
             <td>{{ riwayat.rekomendasi }}</td>
+            <td>
+              <button @click="hapusData(riwayat.id)">Hapus</button>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -74,46 +83,139 @@ export default {
   name: "HomeView",
   data() {
     return {
-      riwayat: "",
+      created_at: "",
       nama: "",
+      bmi: "",
+      status: "",
+      riwayat: "",
       berat: "",
       tinggi: "",
-      bmi: "",
+      rekomendasi: "",
     };
   },
   methods: {
+
     hitungBmi() {
-      this.tinggi /= 100;
-      this.bmi = this.berat / (this.tinggi * this.tinggi);
-      this.tinggi = "";
-      this.berat = "";
-      return this.bmi;
+              this.created_at= new Date();
+              this.tinggi /= 100;
+              this.bmi = this.berat / (this.tinggi * this.tinggi);
+              if (this.bmi <= 18.5) {
+                this.status = "KURANG";
+              } else if (this.bmi <= 24.9) {
+                this.status = "IDEAL";
+              } else if (this.bmi <= 29.9) {
+                this.status = "BERAT";
+              } else {
+                this.status = "OBESITAS";
+              }
+              return this.bmi;
     },
     simpanData() {
-      const data = {
-        nama: this.nama,
-        bmi: this.bmi,
-        status: this.status,
-        rekomendasi: this.rekomendasi,
-      };
       this.$apollo.mutate({
         mutation: gql`
-          mutation simpanData($data: DataInput) {
-            simpanData(data: $data) {
-              id
-              nama
-              bmi
-              status
-              rekomendasi
+          mutation simpanData($created_at: date = "", $nama: String = "", $bmi: Int = , $status: String = "") {
+           insert_riwayat(objects: {created_at: $created_at, nama: $nama, bmi: $bmi, status: $status}) {
+              returning {
+                      id
+                      created_at
+                      nama
+                      bmi
+                      status
+              }
             }
           }
         `,
         variables: {
-          data,
+          nama: this.nama,
+          bmi: this.bmi,
+          status: this.status,
+          rekomendasi: this.rekomendasi,
+          created_at: this.created_at,
+        },
+        update : (store, { data: { insert_riwayat } }) => {
+          const data = store.readQuery({ query: gql`
+            query getRiwayat {
+              riwayat {
+                id
+                created_at
+                nama
+                bmi
+                status
+              }
+            }
+          ` });
+          data.riwayat.push(insert_riwayat.returning[0]);
+          store.writeQuery({ query: gql`
+            query getRiwayat {
+              riwayat {
+                id
+                created_at
+                nama
+                bmi
+                status
+              }
+            }
+          `, data });
         },
       });
+
+      // ini untuk mutation insert query
+      //     mutation MyMutation($created_at: date = "", $nama: String = "", $bmi: Int = , $status: String = "") {
+      // insert_riwayat(objects: {created_at: $created_at, nama: $nama, bmi: $bmi, status: $status}) {
+      //   returning {
+      //     id
+      //     created_at
+      //     nama
+      //     bmi
+      //     status
+      //     }
+      //   }
     },
+      hapusData(id) {
+        this.$apollo.mutate({
+          mutation: gql`
+            mutation hapusData($id: Int) {
+              delete_riwayat(where: {id: {_eq: $id}}) {
+                returning {
+                  id
+                }
+              }
+            }
+          `,
+          variables: {
+            id: id,
+          },
+          update : (store, { data: { delete_riwayat } }) => {
+            const data = store.readQuery({ query: gql`
+              query getRiwayat {
+                riwayat {
+                  id
+                  created_at
+                  nama
+                  bmi
+                  status
+                }
+              }
+            ` });
+            data.riwayat = data.riwayat.filter(riwayat => riwayat.id !== delete_riwayat.returning[0].id);
+            store.writeQuery({ query: gql`
+              query getRiwayat {
+                riwayat {
+                  id
+                  created_at
+                  nama
+                  bmi
+                  status
+                }
+              }
+            `, data });
+          },
+        });
+      },
+
+
   },
+
   components: {},
   computed: {
     riwayats() {
@@ -136,7 +238,9 @@ export default {
       result: (result) => {
         return result.riwayat;
       },
+      
     },
+    // Mutation
   },
 };
 </script>
