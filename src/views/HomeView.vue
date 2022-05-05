@@ -35,9 +35,9 @@
         Hitung BMI
       </button>
 
-      <p v-if="this.bmi != 0">Nilai BMI anda adalah : {{ this.bmi }}</p>
+      <p v-if="this.bmi != 0">Nilai BMI anda adalah : {{ Math.round(this.bmi) }}</p>
 
-      <p>{{ this.status }}</p>
+      <p>{{ this.statusnya }}</p>
 
       <button @click="simpanData">Simpan Hasil</button>
     </div>
@@ -62,7 +62,7 @@
             <td>{{ riwayat.created_at }}</td>
             <td>{{ riwayat.nama }}</td>
             <td>{{ riwayat.bmi }}</td>
-            <td>{{ riwayat.status }}</td>
+            <td>{{ riwayat.statusnya }}</td>
             <td>{{ riwayat.rekomendasi }}</td>
             <td>
               <button @click="hapusData(riwayat.id)">Hapus</button>
@@ -76,7 +76,7 @@
 
 <script>
 // @ is an alias to /src
-
+// import { useMutation } from '@vue/apollo-composable'
 import gql from "graphql-tag";
 
 export default {
@@ -86,41 +86,43 @@ export default {
       created_at: "",
       nama: "",
       bmi: "",
-      status: "",
+      statusnya: "",
       riwayat: "",
       berat: "",
       tinggi: "",
       rekomendasi: "",
+      simpan: [],
     };
   },
   methods: {
 
     hitungBmi() {
-              this.created_at= new Date();
+              
               this.tinggi /= 100;
               this.bmi = this.berat / (this.tinggi * this.tinggi);
               if (this.bmi <= 18.5) {
-                this.status = "KURANG";
+                this.statusnya = "Berat badan di bawah Normal ";
               } else if (this.bmi <= 24.9) {
-                this.status = "IDEAL";
+                this.statusnya = "Ideal";
               } else if (this.bmi <= 29.9) {
-                this.status = "BERAT";
+                this.statusnya = "Berat Badan Berlebih";
               } else {
-                this.status = "OBESITAS";
+                this. statusnya = "Obesitas";
               }
-              return this.bmi;
+              return Math.round(this.bmi);
     },
+    
     simpanData() {
       this.$apollo.mutate({
         mutation: gql`
-          mutation simpanData($created_at: date = "", $nama: String = "", $bmi: Int = , $status: String = "") {
-           insert_riwayat(objects: {created_at: $created_at, nama: $nama, bmi: $bmi, status: $status}) {
+          mutation simpanData( $nama: String = "", $bmi:  numeric = "" , $statusnya: String = "") {
+           insert_riwayat(objects: {nama: $nama, bmi: $bmi, statusnya: $statusnya}) {
               returning {
                       id
                       created_at
                       nama
                       bmi
-                      status
+                      statusnya
               }
             }
           }
@@ -128,9 +130,8 @@ export default {
         variables: {
           nama: this.nama,
           bmi: this.bmi,
-          status: this.status,
-          rekomendasi: this.rekomendasi,
-          created_at: this.created_at,
+          statusnya: this. statusnya,
+         
         },
         update : (store, { data: { insert_riwayat } }) => {
           const data = store.readQuery({ query: gql`
@@ -140,7 +141,7 @@ export default {
                 created_at
                 nama
                 bmi
-                status
+                statusnya
               }
             }
           ` });
@@ -152,12 +153,13 @@ export default {
                 created_at
                 nama
                 bmi
-                status
+                statusnya
               }
             }
           `, data });
         },
       });
+    },
 
       // ini untuk mutation insert query
       //     mutation MyMutation($created_at: date = "", $nama: String = "", $bmi: Int = , $status: String = "") {
@@ -170,7 +172,7 @@ export default {
       //     status
       //     }
       //   }
-    },
+    // },
       hapusData(id) {
         this.$apollo.mutate({
           mutation: gql`
@@ -193,7 +195,7 @@ export default {
                   created_at
                   nama
                   bmi
-                  status
+                  statusnya
                 }
               }
             ` });
@@ -205,7 +207,7 @@ export default {
                   created_at
                   nama
                   bmi
-                  status
+                  statusnya
                 }
               }
             `, data });
@@ -231,7 +233,7 @@ export default {
             created_at
             nama
             bmi
-            status
+            statusnya
           }
         }
       `,
