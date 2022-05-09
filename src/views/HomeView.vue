@@ -24,7 +24,7 @@
           required
           v-model="tinggi"
           id="tinggi"
-        />cm
+        /> cm
 
         <br />
         <br />
@@ -38,13 +38,11 @@
       </button>
 
       <p v-if="this.bmi != 0">
-        Nilai BMI anda adalah : {{ Math.round(this.bmi) }}
+        Nilai BMI anda adalah : {{ Math.round(this.bmi) }} <br>
+        {{ this.statusnya }}
       </p>
-
-      <p>{{ this.statusnya }}</p>
-
-      <button @click="simpanData"
-      :disabled="!this.statusnya|| !this.bmi"
+    
+      <button v-if="this.bmi != 0" @click="simpanData"
       >Simpan Hasil</button>
     </div>
     <hr />
@@ -115,6 +113,7 @@ export default {
     },
 
     simpanData() {
+      
       this.nomor = this.nomor + 1;
       this.$apollo.mutate({
         mutation: gql`
@@ -171,7 +170,15 @@ export default {
             data,
           });
         },
+        
       });
+      {
+        this.nama = "";
+        this.berat="",
+      this.tinggi="",
+      this.bmi=0
+      }
+      
     },
 
     // ini untuk mutation insert query
