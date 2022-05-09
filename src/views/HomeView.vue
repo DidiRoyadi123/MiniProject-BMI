@@ -43,7 +43,9 @@
 
       <p>{{ this.statusnya }}</p>
 
-      <button @click="simpanData">Simpan Hasil</button>
+      <button @click="simpanData"
+      :disabled="!this.statusnya|| !this.bmi"
+      >Simpan Hasil</button>
     </div>
     <hr />
     <div class="riwayat">
