@@ -2,56 +2,42 @@
   <div class="home">
     <div class="kalkulator">
       <h1>Kalkulator BMI( Body Mass Index)</h1>
-
       <input type="text" placeholder="Nama" required v-model="nama" id="nama" />
-
       <br />
       <br />
-
+      
+      <!-- input sumber -->
       <form action="submit">
-        <input
-          type="number"
-          placeholder="Berat Badan"
-          required
-          v-model="berat"
-          id="berat"
-        />
+        <input type="number" placeholder="Berat Badan" required v-model="berat" id="berat" />
         kg ||
 
-        <input
-          type="number"
-          placeholder="Tinggi Badan"
-          required
-          v-model="tinggi"
-          id="tinggi"
-        /> cm
+        <input type="number" placeholder="Tinggi Badan" required v-model="tinggi" id="tinggi" /> cm
 
         <br />
         <br />
       </form>
-      <button
-        @click="hitungBmi"
-        type="submit"
-        :disabled="!nama || !berat || !tinggi"
-      >
+      <button @click="hitungBmi" type="submit" :disabled="!nama || !berat || !tinggi">
         Hitung BMI
       </button>
 
-      <p v-if="this.bmi != 0">
+<!-- harusnya akan muncul kalau hitung bmi di klik -->
+<div class="hasilPerhitungan" v-if="this.ishitungBmi !=false">
+      <p >
         Nilai BMI anda adalah : {{ Math.round(this.bmi) }} <br>
         {{ this.statusnya }}
       </p>
-    
-      <button v-if="this.bmi != 0" @click="simpanData"
-      >Simpan Hasil</button>
+      <button  @click="simpanData">Simpan Hasil</button>
+</div>    
     </div>
     <hr />
-    <div class="riwayat">
+
+
+    <div class="riwayat" v-if ="!isklik" >
       <h3>Riwayat</h3>
       <table border="1">
         <thead>
           <tr>
-            <th>No</th>
+
             <th>Tanggal</th>
             <th>Nama</th>
             <th>BMI</th>
@@ -62,12 +48,14 @@
         </thead>
         <tbody>
           <tr v-for="riwayat in riwayats" :key="riwayat.id">
-            <td>{{ riwayat.id }}</td>
+
             <td>{{ riwayat.created_at }}</td>
             <td>{{ riwayat.nama }}</td>
             <td>{{ riwayat.bmi }}</td>
             <td>{{ riwayat.statusnya }}</td>
-            <td>{{ riwayat.rekomendasi }}</td>
+            <td>
+              <button @click="rekomendasi(riwayat.id, riwayat.bmi, riwayat.statusnya,riwayat.nama)">Rekomendasi</button>
+            </td>
             <td>
               <button @click="hapusData(riwayat.id)">Hapus</button>
             </td>
@@ -75,6 +63,13 @@
         </tbody>
       </table>
     </div>
+<div class="rekomendasi" v-else>
+  <h1>Rekomendasi</h1>
+  <button @click="isklik=false">kembali</button> <br>
+  Hay <b>{{ this.nama }}</b> 
+  Id anda adalah <b>{{ this.id }}</b>
+  <p>berdasarkan hasil perhitungan Nilai BMI anda Adalah <b>{{ this.bmi}}</b></p>
+  </div>
   </div>
 </template>
 
@@ -87,6 +82,10 @@ export default {
   name: "HomeView",
   data() {
     return {
+      ishitungBmi: false,
+      isklik: false,
+      Number: 0,
+      id: "",
       created_at: "",
       nama: "",
       bmi: "",
@@ -99,7 +98,7 @@ export default {
   },
   methods: {
     hitungBmi() {
-      
+      this.ishitungBmi = !this.ishitungBmi;
       this.bmi = this.berat / ((this.tinggi / 100) ** 2);
       if (this.bmi <= 18.5) {
         this.statusnya = "Berat badan di bawah Normal ";
@@ -113,7 +112,7 @@ export default {
     },
 
     simpanData() {
-      
+this.ishitungBmi = !this.ishitungBmi;
       this.nomor = this.nomor + 1;
       this.$apollo.mutate({
         mutation: gql`
@@ -170,15 +169,15 @@ export default {
             data,
           });
         },
-        
+
       });
       {
         this.nama = "";
-        this.berat="",
-      this.tinggi="",
-      this.bmi=0
+        this.berat = "",
+          this.tinggi = "",
+          this.bmi = 0
       }
-      
+
     },
 
     // ini untuk mutation insert query
@@ -193,6 +192,15 @@ export default {
     //     }
     //   }
     // },
+
+    rekomendasi(id, bmi, statusnya, nama) {
+      this.isklik = true;
+      this.id = id;
+      this.nama = nama;
+      this.bmi = bmi;
+      this.statusnya = statusnya;
+    },
+
     hapusData(id) {
       this.$apollo.mutate({
         mutation: gql`
@@ -277,14 +285,17 @@ export default {
   padding: 20px;
   text-align: center;
 }
+
 .kalkulator {
   padding: 20px;
   text-align: center;
 }
+
 .riwayat {
   padding: 20px;
   text-align: center;
 }
+
 table {
   border-collapse: collapse;
   width: 100%;
