@@ -6,7 +6,7 @@
       <br />
       <br />
       
-      <!-- input sumber -->
+      <!-- input user-->
       <form action="submit">
         <input type="number" placeholder="Berat Badan" required v-model="berat" id="berat" />
         kg ||
@@ -20,7 +20,7 @@
         Hitung BMI
       </button>
 
-<!-- harusnya akan muncul kalau hitung bmi di klik -->
+<!-- Event Handler ketika bmi di klik -->
 <div class="hasilPerhitungan" v-if="this.ishitungBmi !=false">
       <p >
         Nilai BMI anda adalah : {{ Math.round(this.bmi) }} <br>
@@ -31,7 +31,7 @@
     </div>
     <hr />
 
-
+<!-- TABEL RIWAYAT -->
     <div class="riwayat" v-if ="!isklik" >
       <h3>Riwayat</h3>
       <table border="1">
@@ -63,13 +63,17 @@
         </tbody>
       </table>
     </div>
+
+    <!-- Bagian Halaman Rekomendasi -->
 <div class="rekomendasi" v-else>
   <h1>Rekomendasi</h1>
   <button @click="isklik=false">kembali</button> <br>
-  Hay <b>{{ this.nama }}</b> 
+  Hay <b>{{ this.namaRekomendasi }}</b> 
   Id anda adalah <b>{{ this.id }}</b>
   <p>berdasarkan hasil perhitungan Nilai BMI anda Adalah <b>{{ this.bmi}}</b></p>
   </div>
+
+
   </div>
 </template>
 
@@ -84,19 +88,21 @@ export default {
     return {
       ishitungBmi: false,
       isklik: false,
-      Number: 0,
       id: "",
       created_at: "",
       nama: "",
+      namaRekomendasi: "",
       bmi: "",
       statusnya: "",
       riwayat: "",
       berat: "",
       tinggi: "",
-      // rekomendasi: "",
+    
     };
   },
   methods: {
+
+    // method untuk menghitung bmi
     hitungBmi() {
       this.ishitungBmi = !this.ishitungBmi;
       this.bmi = this.berat / ((this.tinggi / 100) ** 2);
@@ -111,6 +117,8 @@ export default {
       }
     },
 
+
+    // method untuk menyimpan data
     simpanData() {
 this.ishitungBmi = !this.ishitungBmi;
       this.nomor = this.nomor + 1;
@@ -172,6 +180,7 @@ this.ishitungBmi = !this.ishitungBmi;
 
       });
       {
+        // Kosongkan inputan
         this.nama = "";
         this.berat = "",
           this.tinggi = "",
@@ -193,14 +202,18 @@ this.ishitungBmi = !this.ishitungBmi;
     //   }
     // },
 
+
+    // method untuk menampilkan dan mengambil data riwayat
     rekomendasi(id, bmi, statusnya, nama) {
       this.isklik = true;
       this.id = id;
-      this.nama = nama;
+      this.namaRekomendasi = nama;
       this.bmi = bmi;
       this.statusnya = statusnya;
     },
 
+
+    // method untuk menghapus data
     hapusData(id) {
       this.$apollo.mutate({
         mutation: gql`
