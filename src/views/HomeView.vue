@@ -5,7 +5,16 @@
       <input type="text" placeholder="Nama" required v-model="nama" id="nama" />
       <br />
       <br />
-      
+
+      <input type="number" placeholder="Umur" v-model="umur"/>  
+      <br />
+      <br />
+      <input type="radio" value="Wanita" v-model="gender">
+      <label for="Wanita">Wanita</label>
+      <input type="radio" id="Pria" value="Pria" v-model="gender">
+      <label for="Pria">Pria</label>
+      <br>
+      <br>
       <!-- input user-->
       <form action="submit">
         <input type="number" placeholder="Berat Badan" required v-model="berat" id="berat" />
@@ -16,7 +25,7 @@
         <br />
         <br />
       </form>
-      <button @click="hitungBmi" type="submit" :disabled="!nama || !berat || !tinggi">
+      <button @click="hitungBmi" type="submit" :disabled="!nama || !berat || !tinggi || !gender || !umur">
         Hitung BMI
       </button>
 
@@ -53,8 +62,18 @@
             <td>{{ riwayat.nama }}</td>
             <td>{{ riwayat.bmi }}</td>
             <td>{{ riwayat.statusnya }}</td>
+           
             <td>
-              <button @click="rekomendasi(riwayat.id, riwayat.bmi, riwayat.statusnya,riwayat.nama)">Rekomendasi</button>
+              <button @click="rekomendasi( 
+                riwayat.id, 
+                riwayat.bmi, 
+                riwayat.berat, 
+                riwayat.tinggi, 
+                riwayat.nama, 
+                riwayat.gender , 
+                riwayat.umur
+                )"
+                >Rekomendasi</button>
             </td>
             <td>
               <button @click="hapusData(riwayat.id)">Hapus</button>
@@ -68,9 +87,16 @@
 <div class="rekomendasi" v-else>
   <h1>Rekomendasi</h1>
   <button @click="isklik=false">kembali</button> <br>
-  Hay <b>{{ this.namaRekomendasi }}</b> 
-  Id anda adalah <b>{{ this.id }}</b>
+    Hay <b>{{ this.namaRekomendasi }}</b> 
+    Id anda adalah <b>{{ this.id }}</b>
+  <br>
+  <p>Umur anda {{ this.umurRekomendasi }} </p>
+  <p>Berat anda {{ this.beratRekomendasi }} </p>
+  <p>Tinggi anda <b>{{ this.tinggiRekomendasi }}</b> </p>
+
   <p>berdasarkan hasil perhitungan Nilai BMI anda Adalah <b>{{ this.bmi}}</b></p>
+  <p>Rekomendasi Kebutuhan kalori anda adalah <b>{{this.kalori}}</b> </p>
+
   </div>
 
 
@@ -88,22 +114,31 @@ export default {
     return {
       ishitungBmi: false,
       isklik: false,
-      id: "",
       created_at: "",
       nama: "",
-      namaRekomendasi: "",
       bmi: "",
       statusnya: "",
       riwayat: "",
       berat: "",
       tinggi: "",
-    
+      umur: "",
+      gender: [],
+
+      // digunakan untuk rekomendasi
+      id :"",
+      beratRekomendasi : "",
+      tinggiRekomendasi : " ",
+      namaRekomendasi: "",
+      genderRekomendasi : "",
+      umurRekomendasi : "",
+      kalori : "",
     };
   },
   methods: {
 
     // method untuk menghitung bmi
     hitungBmi() {
+      
       this.ishitungBmi = !this.ishitungBmi;
       this.bmi = this.berat / ((this.tinggi / 100) ** 2);
       if (this.bmi <= 18.5) {
@@ -120,17 +155,20 @@ export default {
 
     // method untuk menyimpan data
     simpanData() {
-this.ishitungBmi = !this.ishitungBmi;
-      this.nomor = this.nomor + 1;
+      this.ishitungBmi = !this.ishitungBmi;
       this.$apollo.mutate({
         mutation: gql`
           mutation simpanData(
             $nama: String = ""
             $bmi: numeric = ""
             $statusnya: String = ""
+            $umur: numeric = ""
+            $gender: String = ""
+            $berat: numeric =""
+            $tinggi: numeric =""
           ) {
             insert_riwayat(
-              objects: { nama: $nama, bmi: $bmi, statusnya: $statusnya }
+              objects: { nama: $nama, bmi: $bmi, statusnya: $statusnya , umur: $umur , gender: $gender, berat: $berat ,tinggi: $tinggi}
             ) {
               returning {
                 id
@@ -138,6 +176,10 @@ this.ishitungBmi = !this.ishitungBmi;
                 nama
                 bmi
                 statusnya
+                umur
+                gender
+                berat
+                tinggi
               }
             }
           }
@@ -146,6 +188,10 @@ this.ishitungBmi = !this.ishitungBmi;
           nama: this.nama,
           bmi: Math.round(this.bmi),
           statusnya: this.statusnya,
+          umur : this.umur,
+          gender : this.gender.toString(),
+          berat : this.berat,
+          tinggi : this.tinggi,
         },
         update: (store, { data: { insert_riwayat } }) => {
           const data = store.readQuery({
@@ -157,6 +203,10 @@ this.ishitungBmi = !this.ishitungBmi;
                   nama
                   bmi
                   statusnya
+                  umur
+                  gender
+                  berat
+                  tinggi
                 }
               }
             `,
@@ -171,6 +221,10 @@ this.ishitungBmi = !this.ishitungBmi;
                   nama
                   bmi
                   statusnya
+                  umur
+                  gender
+                  berat
+                  tinggi
                 }
               }
             `,
@@ -181,35 +235,37 @@ this.ishitungBmi = !this.ishitungBmi;
       });
       {
         // Kosongkan inputan
-        this.nama = "";
-        this.berat = "",
+          this.nama = "";
+          this.berat = "",
           this.tinggi = "",
-          this.bmi = 0
+          this.bmi = 0,
+          this.gender="",
+          this.umur=""
+         
       }
 
     },
-
-    // ini untuk mutation insert query
-    //     mutation MyMutation($created_at: date = "", $nama: String = "", $bmi: Int = , $status: String = "") {
-    // insert_riwayat(objects: {created_at: $created_at, nama: $nama, bmi: $bmi, status: $status}) {
-    //   returning {
-    //     id
-    //     created_at
-    //     nama
-    //     bmi
-    //     status
-    //     }
-    //   }
-    // },
-
-
     // method untuk menampilkan dan mengambil data riwayat
-    rekomendasi(id, bmi, statusnya, nama) {
-      this.isklik = true;
-      this.id = id;
-      this.namaRekomendasi = nama;
-      this.bmi = bmi;
-      this.statusnya = statusnya;
+    rekomendasi(id, bmi, berat, tinggi, nama, gender , umur) {
+
+      // Untuk laki-laki: (88,4 + 13,4 x berat dalam kilogram) + (4,8 x tinggi dalam sentimeter) – (5,68 x usia dalam tahun) * 1.4 (rata-rata aktivitas harian)
+      // Untuk wanita: (447,6 + 9,25 x berat dalam kilogram) + (3,10 x tinggi dalam sentimeter) – (4,33 x usia dalam tahun)
+
+      this.isklik = true
+      this.id = id
+      this.bmi = bmi
+      this.beratRekomendasi = berat
+      this.tinggiRekomendasi = tinggi
+      this.namaRekomendasi = nama
+      this.genderRekomendasi = gender
+      this.umurRekomendasi = umur
+      
+       if (this.genderRekomendasi=="Pria") {
+      this.kalori =  Math.ceil(((88.4 +13.4 * this.beratRekomendasi) + (4.8*this.tinggiRekomendasi)-(5.68 * this.umurRekomendasi))*1.4);
+       } else {
+         this.kalori = Math.ceil( ((447.6 + 9.25 * this.beratRekomendasi) + (3.10*this.tinggiRekomendasi) - (4.33 * this.umurRekomendasi))*1.4);
+       }
+       return this.kalori
     },
 
 
@@ -238,6 +294,10 @@ this.ishitungBmi = !this.ishitungBmi;
                   nama
                   bmi
                   statusnya
+                  umur
+                  gender
+                  berat
+                  tinggi
                 }
               }
             `,
@@ -254,6 +314,10 @@ this.ishitungBmi = !this.ishitungBmi;
                   nama
                   bmi
                   statusnya
+                  umur
+                  gender
+                  berat
+                  tinggi
                 }
               }
             `,
@@ -282,6 +346,10 @@ this.ishitungBmi = !this.ishitungBmi;
             nama
             bmi
             statusnya
+            umur
+            gender
+            berat
+            tinggi
           }
         }
       `,
