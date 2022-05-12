@@ -14,7 +14,7 @@
         <v-tab to ="/calcbmi">Kalkulator BMI</v-tab>
         <v-tab to ="/calcKalori">Kalkulator Kalori</v-tab>
         <v-tab to="/about">About</v-tab>
-        <v-tab to="/contact">Contact</v-tab>
+        <!-- <v-tab to="/contact">Contact</v-tab> -->
     </v-tabs>
        
       </v-app-bar > 

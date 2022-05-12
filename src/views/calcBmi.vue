@@ -45,8 +45,8 @@
                 </v-row>
                 <v-row>
                   <v-col cols="12">
-                    <h3>Nilai BMI anda adalah : {{ Math.round(this.bmi) }}
-                      <b>{{ this.statusnya }}</b> <br>
+                    <h3>Nilai BMI anda adalah : {{ Math.round(this.bmi) }} <br><br>
+                      <h2>{{ this.statusnya }}</h2> <br>
                       <!-- BMI Gauge -->
                       <div class="gauge">
                         <vue-gauge :refid="'type-unique-id'" :options="this.options"></vue-gauge>
@@ -151,10 +151,13 @@
             <!-- Bagian Halaman Rekomendasi -->
             <div class="rekomendasi" v-else>
               <h1>Rekomendasi</h1>
-              <v-btn color="info" @click="isklik = false">kembali</v-btn> <br>
+              <v-btn color="info" @click="isklik = false">kembali</v-btn> <br><br>
+              <p>Hay {{this.namaRekomendasi}}</p>
               <p>Berat dan Tinggi Anda adalah {{ this.beratRekomendasi }} kg dan {{ this.tinggiRekomendasi }} cm.</p>
-              <p>BMI : {{this.options.needleValue }}</p>
+              
+              <!-- gauge -->
               <div class="gauge">
+                <p>BMI : {{this.options.needleValue }}</p>
                         <vue-gauge :refid="'type-unique-id'" :options="this.options"></vue-gauge>
                       </div>
 
@@ -398,7 +401,7 @@ export default {
       } else if (this.statusnya == "Berat Badan Berlebih") {
         this.saran = "Kurangi Berat badan Anda dengan berolahraga dan batasi asupan kalori sesuai anjurkan ahli gizi Anda";
       } else if (this.statusnya == "Ideal") {
-        this.saran = "Pertahankan berat badan anda dengan sering berolahrag dan memakan makanan bergizi";
+        this.saran = "Pertahankan berat badan anda dengan sering berolahraga dan memakan makanan bergizi";
       } else {
         this.saran = "Tambah Berat badan Anda dengan berolahrag dan memakan makanan bergizi";
       }
