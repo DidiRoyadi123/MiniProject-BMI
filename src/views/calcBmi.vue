@@ -34,6 +34,7 @@
         <!-- right side -->
         <v-col cols="1" md="6">
           <v-flex>
+            <!--Alert tampilkan hasil perhitungan -->
             <v-alert :value="alert" :color="warna" dark icon="mdi-medal-outline" transition="scale-transition"
               class="hasilPerhitungan" v-if="this.ishitungBmi != false" dismissible shaped>
               <v-card-text>
@@ -46,12 +47,18 @@
                   <v-col cols="12">
                     <h3>Nilai BMI anda adalah : {{ Math.round(this.bmi) }}
                       <b>{{ this.statusnya }}</b> <br>
+                      <!-- BMI Gauge -->
+                      <div class="gauge">
+                        <vue-gauge :refid="'type-unique-id'" :options="this.options"></vue-gauge>
+                      </div>
+
                       <v-btn color="secondary" @click="simpanData">Simpan Hasil</v-btn>
                     </h3>
                   </v-col>
                 </v-row>
               </v-card-text>
             </v-alert>
+
 
             <!-- TABEL RIWAYAT -->
             <div class="riwayat" v-if="!isklik">
@@ -90,138 +97,104 @@
                       )">Rekomendasi</v-btn>
                     </td>
                     <td>
-                      <v-btn color="error" small @click="hapusData(riwayat.id)">
-                        <v-icon> mdi-delete-forever </v-icon>
-                      </v-btn>
-
+                      <!-- Form konfirmasi delete -->
+                      <v-dialog v-model="dialog" persistent max-width="290">
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-btn v-bind="attrs" v-on="on" color="error" small>
+                            <v-icon> mdi-delete-forever </v-icon>
+                          </v-btn>
+                        </template>
+                        <v-card>
+                          <v-card-title class="text-h5">
+                            konfirmasi
+                          </v-card-title>
+                          <v-card-text>
+                            Apakah anda yakin ingin menghapus data ini?
+                          </v-card-text>
+                          <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn color="green" text @click="dialog = false">
+                              Tidak
+                            </v-btn>
+                            <v-btn color="Red" text @click="hapusData(riwayat.id), dialog = false">
+                             Yakin
+                            </v-btn>
+                          </v-card-actions>
+                        </v-card>
+                      </v-dialog>
                     </td>
                   </tr>
                 </tbody>
                 <tr v-if="$apollo.loading" align-items="center">
-                  <td><v-skeleton-loader class="mx-auto" max-width="100%" type="table-cell@6"></v-skeleton-loader></td>
-                  <td><v-skeleton-loader class="mx-auto" max-width="100%" type="table-cell@6"></v-skeleton-loader></td>
-                  <td><v-skeleton-loader class="mx-auto" max-width="100%" type="table-cell@6"></v-skeleton-loader></td>
-                  <td><v-skeleton-loader class="mx-auto" max-width="100%" type="table-cell@6"></v-skeleton-loader></td>
-                  <td><v-skeleton-loader class="mx-auto" max-width="100%" type="table-cell@6"></v-skeleton-loader></td>
-                  <td><v-skeleton-loader class="mx-auto" max-width="100%" type="table-cell@6"></v-skeleton-loader></td>
-                  
+                  <td>
+                    <v-skeleton-loader class="mx-auto" max-width="100%" type="table-cell@6"></v-skeleton-loader>
+                  </td>
+                  <td>
+                    <v-skeleton-loader class="mx-auto" max-width="100%" type="table-cell@6"></v-skeleton-loader>
+                  </td>
+                  <td>
+                    <v-skeleton-loader class="mx-auto" max-width="100%" type="table-cell@6"></v-skeleton-loader>
+                  </td>
+                  <td>
+                    <v-skeleton-loader class="mx-auto" max-width="100%" type="table-cell@6"></v-skeleton-loader>
+                  </td>
+                  <td>
+                    <v-skeleton-loader class="mx-auto" max-width="100%" type="table-cell@6"></v-skeleton-loader>
+                  </td>
+                  <td>
+                    <v-skeleton-loader class="mx-auto" max-width="100%" type="table-cell@6"></v-skeleton-loader>
+                  </td>
+
                 </tr>
-
-
-
               </v-simple-table>
             </div>
             <!-- Bagian Halaman Rekomendasi -->
             <div class="rekomendasi" v-else>
               <h1>Rekomendasi</h1>
               <v-btn color="info" @click="isklik = false">kembali</v-btn> <br>
-              <!-- Hay <b>{{ this.namaRekomendasi }}</b> 
-    Id anda adalah <b>{{ this.id }}</b>
-  <br>
-  <p>Umur anda {{ this.umurRekomendasi }} </p>
-  <p>Berat anda {{ this.beratRekomendasi }} </p>
-  <p>Tinggi anda <b>{{ this.tinggiRekomendasi }}</b> </p>
-
-  <p>berdasarkan hasil perhitungan Nilai BMI anda Adalah <b>{{ this.bmi}}</b></p>
-  <p>Rekomendasi Kebutuhan kalori anda adalah <b>{{this.kalori}}</b> </p> -->
-
               <p>Berat dan Tinggi Anda adalah {{ this.beratRekomendasi }} kg dan {{ this.tinggiRekomendasi }} cm.</p>
-              <p>Index BMI Anda : {{ this.bmi }}</p>
+              <p>BMI : {{this.options.needleValue }}</p>
+              <div class="gauge">
+                        <vue-gauge :refid="'type-unique-id'" :options="this.options"></vue-gauge>
+                      </div>
+
               <p>Level Status BMI Anda adalah <b>{{ this.statusnya }}.</b> </p>
               <p>{{ this.saran }}</p>
-              <p>Kebutuhan Kalori Harian anda adalah : <b>{{ this.kalori }} </b></p>
+              <p>Kebutuhan Kalori Harian anda adalah : <b>{{ this.kalori }} </b> Kkl</p>
               <p>Berat badan Anda bisa dikatakan ideal jika angka BMI Anda berada antara angka 18,5 sampai 24,9.
                 Bagaimana cara menjaga agar berat badan tetap ideal? Anda perlu mengonsumsi makanan dan minuman sesuai
                 dengan kebutuhan kalori harian Anda
               </p>
 
-
-
-
-
             </div>
           </v-flex>
         </v-col>
       </v-row>
-      <!-- <v-flex xs12 sm6 md9>
-        <v-card class="mx-auto" max-width="500">
-          <v-card-title>
-            <h1 class="headline">Hasil</h1>
-          </v-card-title>
-          <v-card-text>
-            <v-row>
-              <v-col cols="12" sm="6">
-                <v-card-text>
-                  <h2>Nama</h2>
-                  <p>{{ nama }}</p>
-                </v-card-text>
-              </v-col>
-              <v-col cols="12" sm="6">
-                <v-card-text>
-                  <h2>Umur</h2>
-                  <p>{{ umur }}</p>
-                </v-card-text>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="12" sm="6">
-                <v-card-text>
-                  <h2>Jenis Kelamin</h2>
-                  <p>{{}}</p>
-                </v-card-text>
-              </v-col>
-              <v-col cols="12" sm="6">
-                <v-card-text>
-                  <h2>Berat Badan</h2>
-                  <p>{{ berat }}</p>
-                </v-card-text>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="12" sm="6">
-                <v-card-text>
-                  <h2>Tinggi Badan</h2>
-                  <p>{{ tinggi }}</p>
-                </v-card-text>
-              </v-col>
-              <v-col cols="12" sm="6">
-                <v-card-text>
-                  <h2>BMI</h2>
-                  <p>{{ bmi }}</p>
-                </v-card-text>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="12" sm="6">
-                <v-card-text>
-                  <h2>Status</h2>
-                  <p>{{ status }}</p>
-                </v-card-text>
-              </v-col>
-              <v-col cols="12" sm="6">
-                <v-card-text>
-                  <h2>Keterangan</h2>
-                  <p>{{ keterangan }}</p>
-                </v-card-text>
-              </v-col>
-            </v-row>
-          </v-card-text>
-        </v-card>
-      </v-flex> -->
 
       <!-- untuk test -->
-      <p>{{ this.ishitungBmi }}</p>
+
     </v-container>
   </v-app>
+
+
+
+
+
 </template>
+
+
+
 
 <script>
 import gql from "graphql-tag";
+import VueGauge from 'vue-gauge';
+
 
 export default {
   name: "calcBmi",
   data() {
     return {
+      dialog: false,
       //Rules input
 
       ishitungBmi: false,
@@ -249,7 +222,23 @@ export default {
       //alert
       alert: "true",
       warna: "",
-    };
+
+      //gauge
+      options: {
+        hasNeedle: true,
+        outerNeedle: false,
+        needleColor: "Blue",
+        needleStartValue: -1,
+        needleUpdateSpeed: 1,
+        arcColors: ["orange", "green", "red"],
+        arcDelimiters: [40, 60],
+        rangeLabel: ["0", "100"],
+        centralLabel: "E-BMI",
+        rangeLabelFontSize: 20,
+        needleValue: 0,
+        chartWidth: "400",
+      }
+    }
   },
   methods: {
     //Reset Inputan
@@ -270,6 +259,7 @@ export default {
       } else {
         this.statusnya = "Obesitas", this.warna = "error";
       }
+      return this.options.needleValue = Math.round(this.bmi);
     },
 
     // method untuk menyimpan data
@@ -376,7 +366,7 @@ export default {
 
       this.isklik = true;
       this.id = id;
-      this.bmi = bmi;
+      this.options.needleValue = bmi;
       this.beratRekomendasi = berat;
       this.tinggiRekomendasi = tinggi;
       this.namaRekomendasi = nama;
@@ -477,7 +467,9 @@ export default {
     },
   },
 
-  components: {},
+  components: {
+    VueGauge
+  },
   computed: {
     riwayats() {
       return this.$apolloData.data.riwayat;
@@ -509,3 +501,9 @@ export default {
   },
 };
 </script>
+
+<style>
+.col-12 {
+  text-align: center;
+}
+</style>
