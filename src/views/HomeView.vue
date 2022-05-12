@@ -353,7 +353,7 @@ export default {
           }
         }
       `,
-      result: (result) => {
+      result: (result,) => {
         return result.riwayat;
       },
     },
