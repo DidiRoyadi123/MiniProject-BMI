@@ -1,4 +1,4 @@
-# coba6
+# E-BMI
 
 ## Project setup
 ```
