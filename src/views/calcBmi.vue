@@ -98,7 +98,7 @@
                     </td>
                     <td>
                       <!-- Form konfirmasi delete -->
-                      <v-dialog v-model="dialog" persistent max-width="290">
+                       <v-dialog v-model="dialog" persistent max-width="290">
                         <template v-slot:activator="{ on, attrs }">
                           <v-btn v-bind="attrs" v-on="on" color="error" small>
                             <v-icon> mdi-delete-forever </v-icon>
@@ -117,7 +117,7 @@
                               Tidak
                             </v-btn>
                             <v-btn color="Red" text @click="hapusData(riwayat.id), dialog = false">
-                              Yakin
+                             Yakin
                             </v-btn>
                           </v-card-actions>
                         </v-card>
