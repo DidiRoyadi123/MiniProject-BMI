@@ -1,64 +1,68 @@
 <template>
     <v-app>
-        <h1>karbohidrat</h1>
+        <h1>Karbohidrat</h1>
         <v-card>
             <v-container fluid>
+                <!-- Query karbohidrat -->
                 <v-row>
-                    <v-col cols="6" sm="4">
-                        <v-img src="@/assets/karbohidrat/nasi.jpg" aspect-ratio="1">
-                            <v-btn color="warning">Tambah Nasi</v-btn>
+                    <v-col cols="6" sm="4" v-for="karbohidrat in karbohidrats" :key="karbohidrat.id">
+                        <v-img :src="require(`@/assets/karbohidrat/${karbohidrat.namaKarbohidrat}.jpg`)" aspect-ratio="1">
+                            <v-btn color="warning" >Tambah {{ karbohidrat.namaKarbohidrat }}</v-btn>
                         </v-img>
                     </v-col>
+            
+                    <!-- jika loading jalankan ini -->
 
-                    <v-col cols="6" sm="4">
-                        <v-img src="@/assets/karbohidrat/bihun.jpg" aspect-ratio="1">
-                            <v-btn color="warning">Tambah bihun</v-btn>
-                        </v-img>
-                    </v-col>
-                    <v-col cols="6" sm="4">
-                        <v-img src="@/assets/karbohidrat/biskuit.jpg" aspect-ratio="1">
-                            <v-btn color="warning">Tambah biskuit</v-btn>
-                        </v-img>
-                    </v-col>
+                    <v-col v-if="$apollo.loading" cols="6" sm="4">
 
-                    <v-col cols="6" sm="4">
-                        <v-img src="@/assets/karbohidrat/jagung.jpg" aspect-ratio="1">
-                            <v-btn color="warning">Tambah jagung</v-btn>
-                        </v-img>
+                        <v-skeleton-loader class="mx-auto" max-width="300" type="card"></v-skeleton-loader>
                     </v-col>
-
-                    <v-col cols="6" sm="4">
-                        <v-img src="@/assets/karbohidrat/kentang.jpg" aspect-ratio="1">
-                            <v-btn color="warning">Tambah Kentang</v-btn>
-                        </v-img>
+                    <v-col v-if="$apollo.loading" cols="6" sm="4">
+                        <v-skeleton-loader class="mx-auto" max-width="300" type="card"></v-skeleton-loader>
                     </v-col>
-
-                    <v-col cols="6" sm="4">
-                        <v-img src="@/assets/karbohidrat/mie.jpg" aspect-ratio="1">
-                            <v-btn color="warning">Tambah Mie</v-btn>
-                        </v-img>
+                    <v-col v-if="$apollo.loading" cols="6" sm="4">
+                        <v-skeleton-loader class="mx-auto" max-width="300" type="card"></v-skeleton-loader>
                     </v-col>
-
-                    <v-col cols="6" sm="4">
-                        <v-img src="@/assets/karbohidrat/roti.jpg" aspect-ratio="1">
-                            <v-btn color="warning">Tambah Roti</v-btn>
-                        </v-img>
-                    </v-col>
-
-                    <v-col cols="6" sm="4">
-                        <v-img src="@/assets/karbohidrat/singkong.jpg" aspect-ratio="1">
-                            <v-btn color="warning">Tambah singkong</v-btn>
-                        </v-img>
-                    </v-col>
-
-                    <v-col cols="6" sm="4">
-                        <v-img src="@/assets/karbohidrat/ubi.jpg" aspect-ratio="1">
-                            <v-btn color="warning">Tambah Ubi</v-btn>
-                        </v-img>
-                    </v-col>
-
                 </v-row>
             </v-container>
         </v-card>
      </v-app>   
 </template>
+<script>
+import gql from "graphql-tag";
+
+export default {
+    name: 'karbohidratView',
+    data() {
+        return {
+          
+        }
+    },
+    methods: {
+        //
+    },
+    computed: {
+        karbohidrats() {
+            return this.$apolloData.data.karbohidrat;
+        },
+    },
+    apollo: {
+        karbohidrat: {
+            query: gql`
+        query {
+          karbohidrat {
+            id
+            namaKarbohidrat
+            kalori
+            berat
+          }
+        }
+      `,
+            result: (result) => {
+                return result.karbohidrat;
+            },
+        },
+    }
+}
+
+</script>

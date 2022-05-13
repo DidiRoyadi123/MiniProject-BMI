@@ -6,35 +6,26 @@
       <h1>Kalkulator Kalori Makanan </h1>
       <v-container fluid>
         <!-- left Side -->
-        <v-row align-items="center" center >
-        <v-col cols="1" md="4">
-          <v-flex max-width="50%">
-            <h3>Isi Piringku</h3>
-            <!-- <v-btn color="info" to="/calcKalori/karbohidratView" >Karbohidrat</v-btn> <br><br>
-            <v-btn color="info" to="/calcKalori/proteinView" >Protein</v-btn> -->
+        <v-row align-items="center" center>
+          <v-col cols="1" md="4">
+            <v-flex max-width="50%">
+              <h3>Isi Piringku</h3>
+              <v-tabs vertical>
+                <v-tab color="info" to="/calcKalori/karbohidratView"> Karbohidrat</v-tab>
+                <v-tab color="info" to="/calcKalori/proteinView"> Protein</v-tab>
+                <v-tab color="info" to="/calcKalori/buahView"> Buah-Buahan</v-tab>
+                <v-tab color="info" to="/calcKalori/sayurView"> Sayuran</v-tab>
+              </v-tabs>
 
-            <v-tabs 
-            vertical
-          
-           
-            >
-              <v-tab color="info" to ="/calcKalori/karbohidratView"> Karbohidrat</v-tab>
-              <v-tab color="info" to ="/calcKalori/proteinView"> Protein</v-tab>
-              <v-tab color="info" to ="/calcKalori/buahView"> Buah-Buahan</v-tab>
-              <v-tab color="info" to ="/calcKalori/sayurView"> Sayuran</v-tab>
-            
-            
-            </v-tabs>
-            
-          </v-flex>
-        </v-col>
-        <!-- right Side -->
-         <v-col cols="1" md="8">
-          <v-flex>
-            <h3>Menu</h3>
-            <router-view></router-view>
-          </v-flex>
-        </v-col>
+            </v-flex>
+          </v-col>
+          <!-- right Side -->
+          <v-col cols="1" md="8">
+            <v-flex>
+              <h3>Menu</h3>
+              <router-view></router-view>
+            </v-flex>
+          </v-col>
         </v-row>
       </v-container>
     </v-app>
@@ -45,7 +36,7 @@
 <script>
 export default {
   name: 'calcKalori',
-  data () {
+  data() {
     return {
       //
     }
@@ -58,13 +49,13 @@ export default {
 .v-btn__content {
   color: #ffff !important;
 }
+
 .v-btn {
   min-width: 0;
-  max-width:100%;
-}
-.col-md-4 {
   max-width: 100%;
 }
 
-
+.col-md-4 {
+  max-width: 100%;
+}
 </style>
