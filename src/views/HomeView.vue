@@ -59,7 +59,7 @@ p {
 }
 
 div[data-app='true'] {
-  background: url('@/assets/bgUtama.jpg') no-repeat center center fixed !important;
+  background: url('@/assets/bgUtama2.jpg') no-repeat center center fixed !important;
   background-size: 100%!important;
 }
 </style>

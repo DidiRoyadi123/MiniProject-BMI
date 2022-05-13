@@ -117,7 +117,7 @@
                               Tidak
                             </v-btn>
                             <v-btn color="Red" text @click="hapusData(riwayat.id), dialog = false">
-                             Yakin
+                              Yakin
                             </v-btn>
                           </v-card-actions>
                         </v-card>
@@ -151,15 +151,15 @@
             <!-- Bagian Halaman Rekomendasi -->
             <div class="rekomendasi" v-else>
               <h1>Rekomendasi</h1>
-              <v-btn color="info" @click="isklik = false">kembali</v-btn> <br><br>
-              <p>Hay {{this.namaRekomendasi}}</p>
+            
+              <p>Hay {{ this.namaRekomendasi }}</p>
               <p>Berat dan Tinggi Anda adalah {{ this.beratRekomendasi }} kg dan {{ this.tinggiRekomendasi }} cm.</p>
-              
+
               <!-- gauge -->
               <div class="gauge">
-                <p>BMI : {{this.options.needleValue }}</p>
-                        <vue-gauge :refid="'type-unique-id'" :options="this.options"></vue-gauge>
-                      </div>
+                <p>BMI : {{ this.options.needleValue }}</p>
+                <vue-gauge :refid="'type-unique-id'" :options="this.options"></vue-gauge>
+              </div>
 
               <p>Level Status BMI Anda adalah <b>{{ this.statusnya }}.</b> </p>
               <p>{{ this.saran }}</p>
@@ -168,8 +168,9 @@
                 Bagaimana cara menjaga agar berat badan tetap ideal? Anda perlu mengonsumsi makanan dan minuman sesuai
                 dengan kebutuhan kalori harian Anda
               </p>
-
+              <v-btn color="info" @click="isklik = false">kembali</v-btn> <br><br>
             </div>
+          
           </v-flex>
         </v-col>
       </v-row>
