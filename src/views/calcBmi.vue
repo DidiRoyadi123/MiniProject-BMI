@@ -113,10 +113,10 @@
                           </v-card-text>
                           <v-card-actions>
                             <v-spacer></v-spacer>
-                            <v-btn color="green" text @click="dialog = false">
+                            <v-btn plain color="success" text @click="dialog = false">
                               Tidak
                             </v-btn>
-                            <v-btn color="Red" text @click="hapusData(riwayat.id), dialog = false">
+                            <v-btn plain color="grey" text @click="hapusData(riwayat.id), dialog = false">
                              Yakin
                             </v-btn>
                           </v-card-actions>
@@ -399,7 +399,7 @@ export default {
       } else if (this.statusnya == "Ideal") {
         this.saran = "Pertahankan berat badan anda dengan sering berolahraga dan memakan makanan bergizi";
       } else {
-        this.saran = "Tambah Berat badan Anda dengan berolahrag dan memakan makanan bergizi";
+        this.saran = "Tambah Berat badan Anda dengan berolahraga dan memakan makanan bergizi";
       }
 
       return this.kalori, this.saran;

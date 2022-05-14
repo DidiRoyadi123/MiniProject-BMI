@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/HomeView.vue'
-import rekomendasiHasil from '@/components/rekomendasiHasil.vue'
+
 
 Vue.use(VueRouter)
 
@@ -10,13 +10,6 @@ const routes = [
     path: '/',
     name: 'home',
     component: Home,
-    children: [
-      {
-        path: 'rekomendasiHasil',
-        name: 'rekomendasiHasil',
-        component: rekomendasiHasil
-      }
-    ]
 
   },
   {
@@ -29,28 +22,6 @@ const routes = [
     path: '/calcKalori',
     name: 'calcKalori',
     component: () => import('../views/calcKalori.vue'),
-    children: [
-      {
-        path: '/calcKalori/karbohidratView',
-        name: 'karbohidratView',
-        component: () => import('../components/karbohidratView.vue')
-      },
-      {
-        path: '/calcKalori/proteinView',
-        name: 'proteinView',
-        component: () => import('../components/proteinView.vue')
-      },
-      {
-        path: '/calcKalori/buahView',
-        name: 'buahView',
-        component: () => import('../components/buahView.vue')
-      },
-      {
-        path: '/calcKalori/sayurView',
-        name: 'sayurView',
-        component: () => import('../components/sayurView.vue')
-      },
-    ]
   },
   {
     path: '/about',
