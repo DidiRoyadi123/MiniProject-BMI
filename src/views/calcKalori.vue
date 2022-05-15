@@ -62,18 +62,18 @@
                   <p>Kalori :{{ this.kaloriBuah }}</p>
                 </div>
 
-                <div class="sayur" v-if="this.namaSayur">
+                <div class="sayur" v-if="this.namaSayuran">
                   <h3>Sayuran</h3>
                   <p>Sayuran : {{ this.namaSayuran }}</p>
                   <p>Kalori :{{ this.kaloriSayuran }}</p>
                 </div>
-<!--                 
-                <div class="jumlahKalo" v-if="this.kaloriKarbohidrat||this.kaloriProtein||this.kaloriBuah||this.kaloriSayuran"> -->
+
                 <v-divider></v-divider>
                 <br>
                 <p>Jumlah Kalori yang anda makan kali ini :
                   <b>{{ this.kaloriKarbohidrat + this.kaloriProtein + this.kaloriBuah + this.kaloriSayuran }} </b> Kkal</p>
-                  <!-- </div> -->
+                
+                  <v-btn color="error" @click="hapusSemua">Hapus semua</v-btn>
               </v-banner>
 
             </v-flex>
@@ -107,7 +107,7 @@
                         </v-card-text>
 
                         <v-card-actions>
-                          <v-btn color="primary" block :disabled="karbohidrat.id === idKarbohidrat" @click="tambahKarbo(
+                          <v-btn color="primary" block :disabled="karbohidrat.id == idKarbohidrat" @click="tambahKarbo(
                           karbohidrat.id,
                           karbohidrat.namaKarbohidrat,
                           karbohidrat.kalori)">Pilih {{ karbohidrat.namaKarbohidrat }}</v-btn>
@@ -306,13 +306,13 @@ export default {
   data: () => ({
     item: 0,
     items: [
-      { text: 'Karbohidrat', icon: 'mdi-food', value: 'karbohidrat' },
-      { text: 'Protein', icon: 'mdi-food-steak', value: 'protein' },
-      { text: 'Buah-Buahan', icon: 'mdi-food-apple', value: 'buah' },
-      { text: 'Sayuran', icon: 'mdi-flower', value: 'sayur' },
+      { text: 'Karbohidrat', icon: 'mdi-food' },
+      { text: 'Protein', icon: 'mdi-food-steak' },
+      { text: 'Buah-Buahan', icon: 'mdi-food-apple' },
+      { text: 'Sayuran', icon: 'mdi-flower' },
     ],
     // Karbohidrat
-    idKarbohidrat: "",
+    idKarbohidrat: [],
     namaKarbohidrat: "",
     kaloriKarbohidrat: "",
     // isBtnKarbo: false,
@@ -455,6 +455,24 @@ export default {
       this.namaSayuran = nama;
       this.kaloriSayuran = kalori;
       this.isBtnSayuran = true;
+    },
+    hapusSemua() {
+      this.idKarbohidrat = "";
+      this.namaKarbohidrat = "";
+      this.kaloriKarbohidrat = "";
+    
+
+      this.idProtein = "";
+      this.namaProtein = "";
+      this.kaloriProtein = "";
+
+      this.idBuah = "";
+      this.namaBuah = "";
+      this.kaloriBuah = "";
+
+      this.idSayuran = "";
+      this.namaSayuran = "";
+      this.kaloriSayuran = "";
     },
   }
 }
