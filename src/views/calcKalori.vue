@@ -4,31 +4,12 @@
       <!-- <v-btn color="#79b8af" elevation="3" x-large to="/"> Kembali</v-btn>
       <v-img src="@/assets/construction2.jpg" sizes="100%" position="cover"> </v-img> -->
       <h1>Kalkulator Kalori Makanan </h1>
-      <!-- ini test -->
-      <!-- <p v-on:tambahMenu="this.idKarbohidrat">ini tes : {{ this.idKarbohidrat }}</p> -->
-
-
       <v-container fluid>
         <!-- left Side -->
         <v-row align-items="center" center>
           <v-col cols="1" md="4">
             <v-flex max-width="50%">
-
-              <!-- <v-tabs vertical> -->
-              <!-- <v-tab color="info" to="/calcKalori/karbohidratView"> Karbohidrat</v-tab>
-                <v-tab color="info" to="/calcKalori/proteinView"> Protein</v-tab>
-                <v-tab color="info" to="/calcKalori/buahView"> Buah-Buahan</v-tab>
-                <v-tab color="info" to="/calcKalori/sayurView"> Sayuran</v-tab> -->
-
-              <!-- <v-tab href="#karbohidat" color="info">Karbohidrat </v-tab>
-                <v-tab href="#protein" color="info">Protein </v-tab>
-                <v-tab href="#buah" color="info">Buah-Buahan </v-tab>
-                <v-tab href="#sayur" color="info">Sayuran </v-tab>
- -->
-
-
               <v-list class="pastel_list">
-
                 <v-list-item-group v-model="item" color="primary">
                   <v-list-item v-for="(item, i) in items" :key="i">
                     <v-list-item-icon>
@@ -46,8 +27,10 @@
                 <h2>Isi Piringku</h2> <br>
                 <div class="karbo" v-if="this.namaKarbohidrat">
                   <h3>Karbohidrat</h3>
+                  <!-- <div class="isiKarbo" v-for="isiKarbo in isiKarbos" :key="namaKarbohidrat"> -->
                   <p>Karbohidrat : {{ this.namaKarbohidrat }}</p>
                   <p>Kalori :{{ this.kaloriKarbohidrat }}</p>
+                  <!-- </div> -->
                 </div>
 
                 <div class="protein" v-if="this.namaProtein">
@@ -71,9 +54,10 @@
                 <v-divider></v-divider>
                 <br>
                 <p>Jumlah Kalori yang anda makan kali ini :
-                  <b>{{ this.kaloriKarbohidrat + this.kaloriProtein + this.kaloriBuah + this.kaloriSayuran }} </b> Kkal</p>
-                
-                  <v-btn color="error" @click="hapusSemua">Hapus semua</v-btn>
+                  <b>{{ calories }} </b> Kkal
+                </p>
+
+                <v-btn color="error" @click="hapusSemua">Hapus semua</v-btn>
               </v-banner>
 
             </v-flex>
@@ -107,7 +91,12 @@
                         </v-card-text>
 
                         <v-card-actions>
-                          <v-btn color="primary" block :disabled="karbohidrat.id == idKarbohidrat" @click="tambahKarbo(
+                          <!-- <v-btn color="primary" block :disabled="idKarbohidrat.includes(karbohidrat.id)" @click="tambahKarbo(
+                          karbohidrat.id,
+                          karbohidrat.namaKarbohidrat,
+                          karbohidrat.kalori)">Pilih {{ karbohidrat.namaKarbohidrat }}</v-btn> -->
+
+                          <v-btn color="primary" block :disabled="karbohidrat.id===idKarbohidrat" @click="tambahKarbo(
                           karbohidrat.id,
                           karbohidrat.namaKarbohidrat,
                           karbohidrat.kalori)">Pilih {{ karbohidrat.namaKarbohidrat }}</v-btn>
@@ -125,7 +114,6 @@
                       </v-col>
 
                       <!-- jika loading jalankan ini -->
-
                       <v-col v-if="$apollo.loading" cols="6" sm="4">
 
                         <v-skeleton-loader class="mx-auto" max-width="300" type="card"></v-skeleton-loader>
@@ -312,32 +300,29 @@ export default {
       { text: 'Sayuran', icon: 'mdi-flower' },
     ],
     // Karbohidrat
-    idKarbohidrat: [],
+    idKarbohidrat: "",
     namaKarbohidrat: "",
-    kaloriKarbohidrat: "",
+    kaloriKarbohidrat: 0,
     // isBtnKarbo: false,
 
     // Protein
     idProtein: "",
     namaProtein: "",
-    kaloriProtein: "",
+    kaloriProtein: 0,
     // isBtnProtein: false,
 
     // Buah
     idBuah: "",
     namaBuah: "",
-    kaloriBuah: "",
+    kaloriBuah: 0,
     // isBtnBuah: false,
 
     // Sayuran
     idSayuran: "",
     namaSayuran: "",
-    kaloriSayuran: "",
+    kaloriSayuran: 0,
     // isBtnSayuran: false,
 
-    // Perhitungan Kalori
-    // jumlahKalori: {
-    // },
   }),
 
   components: {
@@ -359,6 +344,9 @@ export default {
     sayurans() {
       return this.$apolloData.data.sayuran;
     },
+    calories() {
+      return (this.kaloriKarbohidrat) + (this.kaloriProtein) + (this.kaloriBuah) + (this.kaloriSayuran);
+    }
   },
 
   apollo: {
@@ -432,49 +420,49 @@ export default {
   },
   methods: {
     tambahKarbo(id, nama, kalori) {
-      this.idKarbohidrat = id;
+      this.idKarbohidrat=id;
       this.namaKarbohidrat = nama;
-      this.kaloriKarbohidrat = kalori;
-      this.isBtnKarbo = true;
+      this.kaloriKarbohidrat = parseInt(kalori);
+
     },
 
     tambahProtein(id, nama, kalori) {
       this.idProtein = id;
       this.namaProtein = nama;
-      this.kaloriProtein = kalori;
-      this.isBtnProtein = true;
+      this.kaloriProtein = parseInt(kalori);
+
     },
     tambahBuah(id, nama, kalori) {
       this.idBuah = id;
       this.namaBuah = nama;
-      this.kaloriBuah =  kalori;
-      this.isBtnBuah = true;
+      this.kaloriBuah = parseInt(kalori);
+
     },
     tambahSayuran(id, nama, kalori) {
       this.idSayuran = id;
       this.namaSayuran = nama;
-      this.kaloriSayuran = kalori;
-      this.isBtnSayuran = true;
+      this.kaloriSayuran = parseInt(kalori);
+
     },
     hapusSemua() {
-      this.idKarbohidrat = "";
+      this.idKarbohidrat = [];
       this.namaKarbohidrat = "";
-      this.kaloriKarbohidrat = "";
-    
+      this.kaloriKarbohidrat = 0;
+
 
       this.idProtein = "";
       this.namaProtein = "";
-      this.kaloriProtein = "";
+      this.kaloriProtein = 0;
 
       this.idBuah = "";
       this.namaBuah = "";
-      this.kaloriBuah = "";
+      this.kaloriBuah = 0;
 
       this.idSayuran = "";
       this.namaSayuran = "";
-      this.kaloriSayuran = "";
+      this.kaloriSayuran = 0;
     },
-  }
+  },
 }
 </script>
 
