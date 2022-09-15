@@ -16,7 +16,7 @@
       class="text-center"
       cols="12"
     >
-      {{ new Date().getFullYear() }} — <strong>e-BMI</strong>
+      {{ new Date().getFullYear() }} — <strong>didiroyadi123@gmail.com</strong>
     </v-col>
   </v-footer>
  
